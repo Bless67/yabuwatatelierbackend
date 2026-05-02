@@ -77,8 +77,8 @@ export const ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
-  markupPrice: 'markupPrice',
-  salePrice: 'salePrice',
+  featured: 'featured',
+  qrCode: 'qrCode',
   createdAt: 'createdAt'
 } as const
 

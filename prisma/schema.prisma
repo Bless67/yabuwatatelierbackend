@@ -14,10 +14,10 @@ model Product {
   id          Int            @id @default(autoincrement())
   name        String
   description String?
-  markupPrice Float
-  salePrice   Float
+  featured    Boolean        @default(false)
   images      ProductImage[]
   cartItems   CartItem[]
+  qrCode      String?
   createdAt   DateTime       @default(now())
 }
 

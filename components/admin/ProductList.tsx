@@ -3,19 +3,21 @@
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { FiPlus, FiPackage } from "react-icons/fi";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import ProductListItem from "./ProductListItem";
 
 interface Product {
   id: number;
   name: string;
   description: string | null;
-  markupPrice: number;
-  salePrice: number;
+  featured: boolean;
   images: Array<{
     id: string;
     url: string;
     alt: string | null;
   }>;
+  qrCode?: string | null;
   createdAt: string;
 }
 
@@ -70,17 +72,17 @@ export default function ProductList({
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0 mb-6 md:mb-8">
-        <h1 className="text-2xl md:text-4xl font-bold text-gray-800">
+        <h1 className="text-2xl md:text-4xl font-bold text-[#1a4d3e]">
           Products
         </h1>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <span className="text-base md:text-lg text-[#1a4d3e] bg-[#f5f1e8] px-3 md:px-4 py-2 rounded-xl shadow-md font-semibold text-center">
             Total: {products.length}
           </span>
-          <Link href="/admin/add-product">
-            <button className="w-full bg-[#b8a876] hover:bg-[#a89860] text-[#1a4d3e] font-semibold px-4 py-2 rounded-xl transition flex items-center justify-center gap-2 shadow-lg">
-              <FiPlus /> <span className="hidden sm:inline">Add Product</span>
-            </button>
+          <Link href="/add-product">
+            <Button className="w-full bg-[#b8a876] hover:bg-[#a89860] text-[#1a4d3e] font-semibold">
+              <FiPlus className="mr-2" /> <span className="hidden sm:inline">Add Product</span>
+            </Button>
           </Link>
         </div>
       </div>
@@ -92,9 +94,9 @@ export default function ProductList({
             No products yet
           </p>
           <Link href="/admin/add-product">
-            <button className="bg-[#b8a876] hover:bg-[#a89860] text-[#1a4d3e] font-semibold px-4 md:px-6 py-2 rounded-xl transition flex items-center justify-center gap-2 shadow-lg mx-auto">
-              <FiPlus /> Create your first product
-            </button>
+            <Button className="bg-[#b8a876] hover:bg-[#a89860] text-[#1a4d3e] font-semibold">
+              <FiPlus className="mr-2" /> Create your first product
+            </Button>
           </Link>
         </div>
       ) : (

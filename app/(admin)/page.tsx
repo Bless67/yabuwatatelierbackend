@@ -15,13 +15,13 @@ interface Product {
   id: number;
   name: string;
   description: string | null;
-  markupPrice: number;
-  salePrice: number;
+  featured: boolean;
   images: Array<{
     id: string;
     url: string;
     alt: string | null;
   }>;
+  qrCode?: string | null;
   createdAt: string;
 }
 
@@ -99,11 +99,11 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex w-full">
       <AdminSidebar activeTab={activeTab} />
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto bg-[#f5f1e8]">
+      <div className="flex-1 bg-[#f5f1e8]">
         <div className="p-4 md:p-8">
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
           {/* Dashboard Tab */}
           {activeTab === "dashboard" && (
             <div>
-<h1 className="text-3xl font-bold text-[#1a4d3e] mb-8">
+<h1 className="text-3xl font-bold text-[#1a4d3e] mb-8 mr-6">
                 Welcome to Admin Dashboard
               </h1>
 

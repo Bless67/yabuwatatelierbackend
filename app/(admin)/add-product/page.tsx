@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import ProductForm from "@/components/admin/ProductForm";
 
 export default function AddProductPage() {
@@ -11,8 +12,7 @@ export default function AddProductPage() {
   const handleSubmit = async (formData: {
     name: string;
     description: string;
-    markupPrice: number;
-    salePrice: number;
+    featured: boolean;
     images: Array<{
       url: string;
       publicId: string;
@@ -20,6 +20,8 @@ export default function AddProductPage() {
     }>;
   }) => {
     setIsLoading(true);
+    const loadingToast = toast.loading("Creating product...");
+
     try {
       const response = await fetch("/api/products", {
         method: "POST",
@@ -32,10 +34,22 @@ export default function AddProductPage() {
         throw new Error(error.error || "Failed to create product");
       }
 
-      router.push("/admin?tab=products");
+      const data = await response.json();
+
+      toast.dismiss(loadingToast);
+      toast.success(`${data.name} created successfully! 🎉`, {
+        description: "Redirecting to products list...",
+      });
+
+      setTimeout(() => {
+        router.push("/?tab=products");
+      }, 1500);
     } catch (error) {
       console.error("Error creating product:", error);
-      alert(error instanceof Error ? error.message : "Failed to create product");
+      toast.dismiss(loadingToast);
+      toast.error("Failed to create product", {
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+      });
     } finally {
       setIsLoading(false);
     }

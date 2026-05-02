@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+interface ProductImage {
+  url: string;
+  publicId: string;
+  alt?: string | null;
+}
+
 // GET single product
 export async function GET(
   request: NextRequest,
@@ -38,7 +44,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, description, markupPrice, salePrice, images } = body;
+    const { name, description, featured, images } = body;
 
     // Update product
     const product = await prisma.product.update({
@@ -46,8 +52,7 @@ export async function PUT(
       data: {
         name: name || undefined,
         description: description ?? undefined,
-        markupPrice: markupPrice !== undefined ? parseFloat(markupPrice) : undefined,
-        salePrice: salePrice !== undefined ? parseFloat(salePrice) : undefined,
+        featured: featured !== undefined ? featured : undefined,
       },
       include: { images: true },
     });
@@ -61,7 +66,7 @@ export async function PUT(
 
       // Create new images
       await prisma.productImage.createMany({
-        data: images.map((img: any) => ({
+        data: images.map((img: ProductImage) => ({
           productId: parseInt(id),
           url: img.url,
           publicId: img.publicId,

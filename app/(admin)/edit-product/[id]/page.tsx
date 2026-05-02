@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { toast } from "sonner";
 import ProductForm from "@/components/admin/ProductForm";
 
 interface Product {
   id: number;
   name: string;
   description: string | null;
-  markupPrice: number;
-  salePrice: number;
+  featured: boolean;
   images: Array<{
     id: string;
     url: string;
@@ -35,8 +35,12 @@ export default function EditProductPage() {
         setProduct(data);
       } catch (error) {
         console.error("Error fetching product:", error);
-        alert("Failed to load product");
-        router.push("/admin?tab=products");
+        toast.error("Failed to load product", {
+          description: "Redirecting back to products list...",
+        });
+        setTimeout(() => {
+          router.push("/?tab=products");
+        }, 1500);
       } finally {
         setIsLoading(false);
       }
@@ -48,8 +52,7 @@ export default function EditProductPage() {
   const handleSubmit = async (formData: {
     name: string;
     description: string;
-    markupPrice: number;
-    salePrice: number;
+    featured: boolean;
     images: Array<{
       url: string;
       publicId: string;
@@ -57,6 +60,8 @@ export default function EditProductPage() {
     }>;
   }) => {
     setIsSaving(true);
+    const loadingToast = toast.loading("Updating product...");
+
     try {
       const response = await fetch(`/api/products/${id}`, {
         method: "PUT",
@@ -69,12 +74,22 @@ export default function EditProductPage() {
         throw new Error(error.error || "Failed to update product");
       }
 
-      router.push("/admin?tab=products");
+      const data = await response.json();
+
+      toast.dismiss(loadingToast);
+      toast.success(`${data.name} updated successfully! ✨`, {
+        description: "Redirecting to products list...",
+      });
+
+      setTimeout(() => {
+        router.push("/?tab=products");
+      }, 1500);
     } catch (error) {
       console.error("Error updating product:", error);
-      alert(
-        error instanceof Error ? error.message : "Failed to update product"
-      );
+      toast.dismiss(loadingToast);
+      toast.error("Failed to update product", {
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -83,15 +98,18 @@ export default function EditProductPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#f5f1e8] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-[#1a4d3e] border-t-transparent rounded-full animate-spin" />
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-[#1a4d3e] border-t-transparent rounded-full animate-spin" />
+          <p className="text-[#1a4d3e] font-medium">Loading product...</p>
+        </div>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <p className="text-gray-600 text-lg">Product not found</p>
+      <div className="min-h-screen bg-[#f5f1e8] flex items-center justify-center">
+        <p className="text-[#1a4d3e] text-lg font-semibold">Product not found</p>
       </div>
     );
   }
@@ -106,8 +124,7 @@ export default function EditProductPage() {
           initialData={{
             name: product.name,
             description: product.description || "",
-            markupPrice: product.markupPrice,
-            salePrice: product.salePrice,
+            featured: product.featured,
             images: product.images.map((img) => ({
               url: img.url,
               publicId: img.id,
