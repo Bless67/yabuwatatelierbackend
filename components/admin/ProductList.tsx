@@ -93,7 +93,7 @@ export default function ProductList({
           <p className="text-[#1a4d3e] text-base md:text-lg mb-4">
             No products yet
           </p>
-          <Link href="/admin/add-product">
+          <Link href="/add-product">
             <Button className="bg-[#b8a876] hover:bg-[#a89860] text-[#1a4d3e] font-semibold">
               <FiPlus className="mr-2" /> Create your first product
             </Button>
