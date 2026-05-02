@@ -36,10 +36,7 @@ export default function ProductList({
 
   const handleDelete = useCallback(
     async (id: number) => {
-      if (!window.confirm("Are you sure you want to delete this product?")) {
-        return;
-      }
-
+     
       setDeletingId(id);
       try {
         const response = await fetch(`/api/products/${id}`, {
